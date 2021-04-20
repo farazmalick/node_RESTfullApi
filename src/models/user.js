@@ -1,6 +1,7 @@
 const mongoose=require('mongoose')
 const bcrypt=require('bcryptjs')
 const jwt=require('jsonwebtoken')
+const Task=require('../models/task')
 
 
 const userSchema=new mongoose.Schema({
@@ -92,5 +93,17 @@ userSchema.methods.toJSON=function()
 
 }
 
+userSchema.virtual('tasks',{
+    ref:'Task',
+    localField:'_id',
+    foreignField:'user_id'
+})
+
+userSchema.pre('remove',async function(next)
+{
+    const user=this
+    await Task.deleteMany({user_id:user._id})
+    next()
+})
 const User=mongoose.model('User',userSchema)
 module.exports=User
