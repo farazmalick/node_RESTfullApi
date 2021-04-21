@@ -77,7 +77,7 @@ userSchema.statics.findByCredidentils=async (email,password)=>
 userSchema.methods.generateJWT=async function()
 {
     const user=this
-    const token=await jwt.sign({_id:user._id},'node_restapi')
+    const token=await jwt.sign({_id:user._id},process.env.JWT_SECRET)
     user.tokens=user.tokens.concat({token})
     await user.save()
     return token
